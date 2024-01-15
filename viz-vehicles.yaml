@@ -1,0 +1,6 @@
+title: 'iMove Australia Demo'
+description: 'Fake data'
+drtTrips: trips.json
+center: [145, -38]
+zoom: 9
+
