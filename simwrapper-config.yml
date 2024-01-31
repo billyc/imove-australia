@@ -115,8 +115,8 @@ topNavBar:
 
  # Optional logo will always be shown in the upper-left "brand" area
  logo:
-   image: "http://localhost:8000/imove-australia/imove.png"
-   url: /leipzig/projects/namav/base-case
+   image: "http://localhost:8000/imove.png"
+   url: /
    style:
      backgroundColor: "#333faa"
      padding: "2px 4px"
