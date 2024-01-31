@@ -1,5 +1,5 @@
 title: 'iMove Australia Demo'
-description: 'Fake data'
+description: 'Sample data from parquet'
 drtTrips: trips.json
 center: [145, -38]
 zoom: 9

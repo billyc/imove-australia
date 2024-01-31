@@ -1,0 +1,6 @@
+parquet-data
+compassiot-sample
+*.parquet
+venv
+
+
