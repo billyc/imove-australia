@@ -4,10 +4,11 @@
 import setuptools
 import pandas as pd
 import math
+from datetime import datetime
 from pyspark.conf import SparkConf
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.functions import col, concat, to_json, substring, udf, pandas_udf
-from pyspark.sql.types import StringType, DoubleType
+from pyspark.sql.types import StringType, DoubleType, IntegerType, BooleanType
 
 # Set up Spark with extra ram
 spark = (
@@ -22,7 +23,9 @@ spark = (
 )
 
 # initialize spark dataframe
-folder = './parquet-data'
+folder = './sample-data'
+#folder = './parquet-data'
+
 df = spark.read.parquet(f"{folder}/original")
 df.printSchema()
 
@@ -45,15 +48,29 @@ def get_trimmed_path(value):
       trimmed.append(' '.join(trim))
   return ','.join(trimmed)
 
+def get_day_of_week(value):
+  date_object = datetime.strptime(value, '%Y-%m-%d')
+  return date_object.weekday()
+
+def get_is_weekday(value):
+  date_object = datetime.strptime(value, '%Y-%m-%d')
+  return date_object.weekday() < 5
+
 lon = udf(get_lon, StringType())
 lat = udf(get_lat, StringType())
 trim_path = udf(get_trimmed_path, StringType())
+day_of_week = udf(get_day_of_week, IntegerType())
+is_weekday = udf(get_is_weekday, BooleanType())
 
 # start/end dates and times
 df2 = df2.withColumn('start_date', substring("StartTime",1,10))
 df2 = df2.withColumn('start_time', substring("StartTime",12,8))
 df2 = df2.withColumn('end_date', substring("EndTime",1,10))
 df2 = df2.withColumn('end_time', substring("EndTime",12,8))
+
+# day of week
+df2 = df2.withColumn('day_of_week', day_of_week(col('start_date')))
+df2 = df2.withColumn('is_weekday', is_weekday(col('start_date')))
 
 # start/end points - long/lat
 df2 = df2.withColumn('start_lon', lon(col('first_point')))

@@ -3,9 +3,6 @@
 
 # source venv/bin/activate
 
-# end point: Melbourne Connect 144.96, -37.80
-dest = ("145.0", "-37.8")
-
 # box size in lat/lon degrees -------------
 step = 0.01
 lon_range = (144.20, 146)
@@ -13,9 +10,8 @@ lat_range = (-38.50, -37.00)
 # -----------------------------------------
 
 import setuptools
-import numpy as np
 import pandas as pd
-import csv,json,math,sys
+import csv,json,math
 from flask import Flask, request, jsonify
 from pyspark.conf import SparkConf
 from pyspark.sql import SparkSession
@@ -51,51 +47,29 @@ def calc_reliabilities(writer, rlon, rlat, xstep, xhour=None):
     zlon = fmt.format(round(rlon,digits))
     zlat = fmt.format(round(rlat,digits))
 
-    print(zlon,zlat)
+    print('trying',zlon,zlat)
 
     filtered_df = df
-
-    # start point
     filtered_df = filtered_df.filter(filtered_df.start_lon.startswith(zlon))
     filtered_df = filtered_df.filter(filtered_df.start_lat.startswith(zlat))
 
+    trimmed = filtered_df.select(['start_time','end_time','total_time','TravelDistanceMeters'])
 
-    # end point: Melbourne Connect 144.96, -37.80
-    filtered_df = filtered_df.filter(filtered_df.end_lon.startswith(dest[0]))
-    filtered_df = filtered_df.filter(filtered_df.end_lat.startswith(dest[1]))
+    if len(trimmed.collect()) == 0: return
 
-    # morning peak: 8am - 9am
-    filtered_df = filtered_df.filter(filtered_df.start_time.startswith('08'))
+    # loop by hour
+    h = ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23']
 
-    # Just Fridays
-    filtered_df = filtered_df.filter(filtered_df.day_of_week == 4)
+    for hour in h:
+        trips_per_hour = trimmed.filter(trimmed.start_time.startswith(hour))
+        trips = trips_per_hour.collect()
+        if len(trips) > 0:
+            print(hour,zlon,zlat,len(trips))
+            writer.writerow([3600*int(hour),zlon,zlat,len(trips)])
 
-    # Cars only
-    filtered_df = filtered_df.filter(filtered_df.veh_types == "car")
+# Start analysis ------------------------------------------
 
-    # ==============================================================================
-    # Only need a few columns
-    trimmed = filtered_df.select(['start_time','end_time','TravelDistanceMeters'])
-    trips = trimmed.collect()
-
-    if len(trips) > 1:
-        speeds = []
-        for trip in trips:
-            start_timestamp = 3600*int(trip.start_time[0:2]) + 60*int(trip.start_time[3:5]) + int(trip.start_time[6:8])
-            end_timestamp = 3600*int(trip.end_time[0:2]) + 60*int(trip.end_time[3:5]) + int(trip.end_time[6:8])
-            km_per_hour = 3.6 * trip.TravelDistanceMeters / (end_timestamp - start_timestamp)
-            speeds.append(km_per_hour)
-
-        # coefficient of variance
-        cv = np.std(speeds, ddof=1) / np.mean(speeds) * 100
-
-        print(zlon,zlat, cv)
-        writer.writerow([0,zlon,zlat,cv])
-
-
-# Main analysis ------------------------------------------
-
-with open(sys.argv[1],'w') as f:
+with open('sampled.trips_large.xyt.csv','w') as f:
     writer = csv.writer(f)
     writer.writerow(['time','x','y','value'])
 

@@ -14,7 +14,7 @@ hideLeftBar: true
 hideBreadcrumbs: true
 
 # Show/hide the "Files" section from the right-side dashboard section selector
-hideFiles: true
+hideFiles: false
 
 # Expand dashboards to full width of window; false: center in window instead
 fullWidth: true
@@ -36,7 +36,6 @@ theme: dark
 footer: footer.md
 # footer_en: footer.md
 # footer_de: footer.md
-
 
 # #####################################################################################
 # LEFT SIDE leftNavBar
@@ -107,45 +106,42 @@ footer: footer.md
 #
 
 topNavBar:
- style:
-   backgroundColor: '#333faa' # hex codes or CSS color names allowed
-   #   backgroundImage: "linear-gradient(to right, #F8A82D, #B01515)"
-   # Text color is chosen for plain backgroundColors automatically; force light/dark text here:
-   # useDarkText: true
+  style:
+    backgroundColor: '#333faa' # hex codes or CSS color names allowed
+    #   backgroundImage: "linear-gradient(to right, #F8A82D, #B01515)"
+    # Text color is chosen for plain backgroundColors automatically; force light/dark text here:
+    # useDarkText: true
 
- # Optional logo will always be shown in the upper-left "brand" area
- logo:
-   image: "http://localhost:8000/imove.png"
-   url: /
-   style:
-     backgroundColor: "#333faa"
-     padding: "2px 4px"
-     maxHeight: "3.25rem"
+  # Optional logo will always be shown in the upper-left "brand" area
+  logo:
+    image: 'http://localhost:8000/imove.png'
+    url: /
+    style:
+      backgroundColor: '#333faa'
+      padding: '2px 4px'
+      maxHeight: '3.25rem'
 
- # Left section is left-justified next to the optional logo.
- # Each element should have "text", optional "url" link, optional "style".
- # Each element can also have "dropdown:" array of dropdown text/url items
- left:
+  # Left section is left-justified next to the optional logo.
+  # Each element should have "text", optional "url" link, optional "style".
+  # Each element can also have "dropdown:" array of dropdown text/url items
+  left:
+    - text: 'iMOVE Australia'
+      url: ./base-case
+      style:
+        fontWeight: bold
+        fontFamily: 'Roboto Slab'
+        fontSize: 16px
 
-   - text: "iMOVE Australia"
-     url: ./base-case
-     style:
-       fontWeight: bold
-       fontFamily: "Roboto Slab"
-       fontSize: 16px
+  # Right section is right-justified to edge of window
+  # Each element should have "text", optional "url" link, optional "style".
+  # Each element can also have "dropdown:" array of dropdown text/url items
+  right:
+    - text: 'Sample Data'
+      url: ./
 
- # Right section is right-justified to edge of window
- # Each element should have "text", optional "url" link, optional "style".
- # Each element can also have "dropdown:" array of dropdown text/url items
- right:
-
-   - text: "Sample Data"
-     url: ./
-
-   - text: "About"
-     dropdown:
-     - text: DRT Outskirts
-       url: ./drt-outskirts
-     - text: DRT Entire city
-       url: ./drt-whole-city
-
+    - text: 'About'
+      dropdown:
+        - text: DRT Outskirts
+          url: ./drt-outskirts
+        - text: DRT Entire city
+          url: ./drt-whole-city

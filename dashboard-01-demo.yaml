@@ -8,10 +8,10 @@ layout:
   demo:
     - type: 'xytime'
       title: 'Trip starting locations'
-      file: trips_boxed_4.xyt.csv
+      file: sampled.trips_large.xyt.csv
       projection: EPSG:4326
       center: [145, -38]
-      radius: 4000
+      radius: 500
 
     - type: 'hexagons'
       title: 'Start/End Points'

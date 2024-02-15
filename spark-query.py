@@ -25,28 +25,61 @@ spark = (
 )
 
 # initialize spark dataframe
-# folder = './sample-data/computed'
-folder = './parquet-data/computed'
-
-# df = spark.read.option('mergeSchema','true').parquet(folder)
+folder = './sample-data/computed'
+# folder = './parquet-data/computed'
 df = spark.read.parquet(folder)
 df.printSchema()
 
+# and trip points
+points_folder = './sample-data/trip-points'
+points = spark.read.parquet(points_folder)
 
 # ------------------
-# Set up Flask API
+# Flask API
 
 app = Flask(__name__)
+
+@app.route('/location', methods=['GET'])
+def filter_by_location():
+    lon = float(request.args.get('lon'))
+    lat = float(request.args.get('lat'))
+
+    radius = request.args.get('radius')
+    radius = radius and float(radius) or 0.01  # default radius
+
+    if not lon: return []
+    if not lat: return []
+
+    lon_lo = lon - radius
+    lon_hi = lon + radius
+    lat_lo = lat - radius
+    lat_hi = lat + radius
+
+    filtered_points = points
+    filtered_points = filtered_points.filter(filtered_points.lon.between(lon_lo, lon_hi))
+    filtered_points = filtered_points.filter(filtered_points.lat.between(lat_lo, lat_hi))
+
+    # only return one row per TripID
+    filtered_points = filtered_points.select('TripID').distinct()
+
+    # output
+    json = filtered_points.toPandas().to_json(orient='records')
+    return json
+
 
 @app.route('/path', methods=['GET'])
 def get_path():
     # Get query parameters
     trip = request.args.get('trip')
     if not trip: raise RuntimeError('need trip')
-    # fetch single trip
-    filtered_df = df.filter(df.TripID==trip)
+    trips = trip.split(',')
+    print(trips)
+
+    # fetch selected trip
+    filtered_df = df.filter(df.TripID.isin(trips))
+
     # trimmed = filtered_df.select(['TripID', 'path', 'Timestamp_path'])
-    trimmed = filtered_df.select(['TripID', 'path'])
+    trimmed = filtered_df.select(['TripID', 'Snapped_path','Timestamp_path'])
     # output
     json = trimmed.toPandas().to_json(orient='records')
     return json
@@ -90,7 +123,7 @@ def filter_dataframe():
         filtered_df = filtered_df.filter(filtered_df.TripID==trip)
 
     # trimmed = filtered_df
-    trimmed = filtered_df.select(['VehicleID','TripID','start_date','start_time','end_date','end_time','start_lon','start_lat','end_lon','end_lat','total_time','TravelDistanceMeters'])
+    trimmed = filtered_df.select(['VehicleID','TripID','start_date','start_time','end_date','end_time','start_lon','start_lat','end_lon','end_lat','total_time','TravelDistanceMeters','speed_avg','speed_85th'])
     # print('COUNT:', trimmed.count())
 
     # data = trimmed.collect()
