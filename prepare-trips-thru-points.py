@@ -26,8 +26,8 @@ spark = (
 )
 
 # initialize spark dataframe
-folder = './sample-data'
-#folder = './parquet-data'
+# folder = './sample-data'
+folder = './parquet-data'
 
 df = spark.read.parquet(f"{folder}/original")
 df.printSchema()

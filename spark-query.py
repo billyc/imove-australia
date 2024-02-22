@@ -5,6 +5,7 @@ import setuptools
 import pandas as pd
 import json
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from pyspark.conf import SparkConf
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import to_json, udf
@@ -25,19 +26,21 @@ spark = (
 )
 
 # initialize spark dataframe
-folder = './sample-data/computed'
-# folder = './parquet-data/computed'
+# folder = './sample-data/computed'
+folder = './parquet-data/computed'
 df = spark.read.parquet(folder)
 df.printSchema()
 
 # and trip points
-points_folder = './sample-data/trip-points'
+# points_folder = './sample-data/trip-points'
+points_folder = './parquet-data/trip-points'
 points = spark.read.parquet(points_folder)
 
 # ------------------
 # Flask API
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/location', methods=['GET'])
 def filter_by_location():
@@ -73,13 +76,13 @@ def get_path():
     trip = request.args.get('trip')
     if not trip: raise RuntimeError('need trip')
     trips = trip.split(',')
-    print(trips)
+    # print(trips)
 
     # fetch selected trip
     filtered_df = df.filter(df.TripID.isin(trips))
 
     # trimmed = filtered_df.select(['TripID', 'path', 'Timestamp_path'])
-    trimmed = filtered_df.select(['TripID', 'Snapped_path','Timestamp_path'])
+    trimmed = filtered_df.select(['TripID', 'Path1','Speed_path','start_time'])
     # output
     json = trimmed.toPandas().to_json(orient='records')
     return json

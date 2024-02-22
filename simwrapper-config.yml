@@ -6,113 +6,20 @@
 # ######################################################################################
 # GENERAL SETTINGS
 
-# Show or completely hide the left-side navigation bar and (restore button too!)
-# This will be -ignored- if you define your own leftNavBar below
 hideLeftBar: true
-
-# Show/hide the folder name and breadcrumbs at the top of each dashboard
 hideBreadcrumbs: true
-
-# Show/hide the "Files" section from the right-side dashboard section selector
 hideFiles: false
-
-# Expand dashboards to full width of window; false: center in window instead
 fullWidth: true
-
-# WIP: Force light/dark theme (currently broken)
-# This will be honored initially but user can override it if they really want to
 theme: dark
 
-# Custom CSS which affects entire site.
-# Generally, use style tags below if possible, instead of custom CSS.
 # css: custom.css
-
-# Custom header -- discouraged. Use "topNavBar" below instead. DE/EN optional
 # header: header.md
-# header_en: header.md
-# header_de: header.md
-
-# Custom footer markdown. Shown on NON-fullscreen dashboards. DE/EN optional
-footer: footer.md
-# footer_en: footer.md
-# footer_de: footer.md
-
-# #####################################################################################
-# LEFT SIDE leftNavBar
-#
-# - If leftNavBar is defined, it REPLACES regular SimWrapper left panel.
-# - leftNavBar can have three sections: "top", "middle", "bottom"
-# - top is generally for a logo
-# - middle is the main panel area;
-# - bottom is pushed to the bottom of the window)
-#
-# - Each element should have "text", optional "url" link, and optional "style".
-#
-# - Most elements can include an optional "style:" section for CSS overrides.
-#   Use any regular CSS in camelCase, e.g. "fontWeight: bold" or "marginBottom: 4px"
-#
-# - Highlighting: if the URL specified in an element is a substring of the
-#   **current page URL being viewed**, then the element will be highlighted in the UI.
-#   This can be used to identify which scenario is being shown, for example.
-#   (might make this optional later, feedback welcome)
-#
-
-#leftNavBar:
-#  # top section logo not needed if you already have a logo in the TopNavBar
-#  top:
-#   - url: base-case
-#     image: /local/imove-australia/imove.png
-#     style:
-#       backgroundColor: blue
-#       padding: "4px 4px 0 1rem"
-#       maxHeight: "3.5rem"
-#
-#
-#  # middle section is the main panel area
-#  middle:
-#
-#  # section:true makes it bold and have extra spacing
-#  - section: true
-#    text: "Scenarios"
-#
-#  - text: Sample Data
-#    url: .
-#    style:
-#       marginBottom: 4px
-#
-#
-#  # bottom section is snapped to the bottom of the window
-#  bottom:
-#
-#  - section: true
-#    text_en: "Project Links"
-#    text_de: "Projekt Linken"
-#
-#  - text: iMove Australia
-#    url: https://imoveaustralia.com/
-
-# ######################################################################################
-# TOP NAV BAR topNavBar
-#
-# If topNavBar is defined, a navigation strip across the top of the website is built.
-#
-# topNavBar can have "style", "logo", "left", and "right" sections defined (all optional)
-# - style sets the background etc for the nav bar
-# - logo is always upper-left. Use "maxHeight" in style section to set its size
-# - left and right sections contain navigation text/urls and possibly dropdowns.
-#
-# Most elements can include an optional "style:" section for CSS overrides.
-# Use any regular CSS in camelCase, e.g. "fontWeight: bold" or "marginBottom: 4px"
-#
+# footer: footer.md
 
 topNavBar:
   style:
     backgroundColor: '#333faa' # hex codes or CSS color names allowed
-    #   backgroundImage: "linear-gradient(to right, #F8A82D, #B01515)"
-    # Text color is chosen for plain backgroundColors automatically; force light/dark text here:
-    # useDarkText: true
 
-  # Optional logo will always be shown in the upper-left "brand" area
   logo:
     image: 'http://localhost:8000/imove.png'
     url: /
@@ -121,9 +28,6 @@ topNavBar:
       padding: '2px 4px'
       maxHeight: '3.25rem'
 
-  # Left section is left-justified next to the optional logo.
-  # Each element should have "text", optional "url" link, optional "style".
-  # Each element can also have "dropdown:" array of dropdown text/url items
   left:
     - text: 'iMOVE Australia'
       url: ./base-case
@@ -132,16 +36,13 @@ topNavBar:
         fontFamily: 'Roboto Slab'
         fontSize: 16px
 
-  # Right section is right-justified to edge of window
-  # Each element should have "text", optional "url" link, optional "style".
-  # Each element can also have "dropdown:" array of dropdown text/url items
   right:
-    - text: 'Sample Data'
+    - text: 'Reliability'
+      url: ./
+    - text: 'Vehicle Animation'
+      url: ./
+    - text: 'Trips to U.Melbourne'
+      url: ./
+    - text: 'About'
       url: ./
 
-    - text: 'About'
-      dropdown:
-        - text: DRT Outskirts
-          url: ./drt-outskirts
-        - text: DRT Entire city
-          url: ./drt-whole-city
